@@ -118,7 +118,7 @@
                     { "LazyVim/LazyVim", opts = { colorscheme = "catppuccin-macchiato",},},
 		  },
 		  })
-		  require("lspconfig")
+		  require("nvim-lspconfig")
 		    nvim_lsp.nixd.setup({
          	      cmd = { "nixd" },
    		      settings = {
