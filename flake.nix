@@ -43,7 +43,6 @@
                   # LazyVim
                   LazyVim
                   bufferline-nvim
-                  catppuccin-nvim
                   cmp-buffer
                   cmp-nvim-lsp
                   cmp-path
