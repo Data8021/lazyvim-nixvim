@@ -116,23 +116,22 @@
                     -- put this line at the end of spec to clear ensure_installed
                     { "nvim-treesitter/nvim-treesitter", opts = function(_, opts) opts.ensure_installed = {} end },
                     { "LazyVim/LazyVim", opts = { colorscheme = "catppuccin-macchiato",},},
-                    { nvim_lsp = require("lspconfig")
-		        nvim_lsp.nixd.setup({
-         		  cmd = { "nixd" },
-   			  settings = {
-      			    nixd = {
-         		      nixpkgs = {
-                                expr = "import <nixpkgs> { }",
-         			},
-         		      formatting = {
-            			command = { "nixfmt" },
-         		      },
-      			    },
-   			  },
-			})
-		    },
-                  },
-                })
+		  },
+		  }),
+		  require("lspconfig")
+		    nvim_lsp.nixd.setup({
+         	      cmd = { "nixd" },
+   		      settings = {
+      		        nixd = {
+         		  nixpkgs = {
+                            expr = "import <nixpkgs> { }",
+         		  },
+         		  formatting = {
+            		    command = { "nixfmt" },
+         	 	  },
+      			},
+   		      },
+		    })
               '';
           };
           nixvim' = nixvim.legacyPackages."${system}";
