@@ -21,9 +21,16 @@
         let
           config = {
             extraPackages = with pkgs; [
-              # LazyVim
+              # language servers
               lua-language-server
               stylua
+              nixd
+              nodePackages.bash-language-server
+              dockerfile-language-server-nodejs
+              marksman
+              nodePackages.vim-language-server
+              yaml-language-server
+              nixpkgs-fmt
               # Telescope
               ripgrep
             ];
@@ -36,6 +43,7 @@
                   # LazyVim
                   LazyVim
                   bufferline-nvim
+                  catppuccin-nvim
                   cmp-buffer
                   cmp-nvim-lsp
                   cmp-path
@@ -107,6 +115,7 @@
                     -- { import = "plugins" },
                     -- put this line at the end of spec to clear ensure_installed
                     { "nvim-treesitter/nvim-treesitter", opts = function(_, opts) opts.ensure_installed = {} end },
+                    { vim.cmd.colorscheme("catppuccin-macchiato") },
                   },
                 })
               '';
