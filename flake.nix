@@ -31,6 +31,7 @@
               nodePackages.vim-language-server
               yaml-language-server
               nixpkgs-fmt
+	      nixfmt-rfc-style
               # Telescope
               ripgrep
             ];
@@ -115,7 +116,21 @@
                     -- put this line at the end of spec to clear ensure_installed
                     { "nvim-treesitter/nvim-treesitter", opts = function(_, opts) opts.ensure_installed = {} end },
                     { "LazyVim/LazyVim", opts = { colorscheme = "catppuccin-macchiato",},},
-                    { require'lspconfig'.nixd.setup{} }
+                    { local nvim_lsp = require("lspconfig")
+		        nvim_lsp.nixd.setup({
+         		  cmd = { "nixd" },
+   			  settings = {
+      			    nixd = {
+         		      nixpkgs = {
+                                expr = "import <nixpkgs> { }",
+         			},
+         		      formatting = {
+            			command = { "nixfmt" },
+         		      },
+      			    },
+   			  },
+			})
+		    },
                   },
                 })
               '';
