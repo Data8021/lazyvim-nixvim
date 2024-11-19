@@ -117,7 +117,7 @@
                     { "nvim-treesitter/nvim-treesitter", opts = function(_, opts) opts.ensure_installed = {} end },
                     { "LazyVim/LazyVim", opts = { colorscheme = "catppuccin-macchiato",},},
 		  },
-		  }),
+		  })
 		  require("lspconfig")
 		    nvim_lsp.nixd.setup({
          	      cmd = { "nixd" },
