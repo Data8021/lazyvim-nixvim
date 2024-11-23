@@ -44,6 +44,7 @@
               yaml-language-server
               nixpkgs-fmt
               nixfmt-rfc-style
+              hyprls
               # Telescope
               ripgrep
             ];
@@ -80,6 +81,12 @@
                   nvim-snippets
                   nvim-treesitter.withAllGrammars
                   nvim-treesitter-textobjects
+                  nvim-treesitter-parsers.hyprlang
+                  nvim-treesitter-parsers.rasi
+                  nvim-treesitter-parsers.vim
+                  nvim-treesitter-parsers.jsonc
+                  nvim-treesitter-parsers.ini
+                  nvim-treesitter-parsers.bash
                   nvim-ts-autotag
                   persistence-nvim
                   plenary-nvim
@@ -142,7 +149,22 @@
                                     -- uncomment to import/override with your plugins
                                     -- { import = "plugins" },
                                     -- put this line at the end of spec to clear ensure_installed
-                                    { "nvim-treesitter/nvim-treesitter", opts = function(_, opts) opts.ensure_installed = {} end },
+                                    { "nvim-treesitter/nvim-treesitter",
+                                        opts = function(_, opts) opts.ensure_installed = {} end
+                                        vim.filetype.add({
+                                          extension = { rasi = "rasi", rofi = "rasi", wofi = "rasi" },
+                                          filename = {
+                                            ["vifmrc"] = "vim",
+                                          },
+                                          pattern = {
+                                            [".*/waybar/config"] = "jsonc",
+                                            [".*/mako/config"] = "ini",
+                                            [".*/kitty/.+%.conf"] = "bash",
+                                            [".*/hypr/.+%.conf"] = "hyprlang",
+                                            ["%.env%.[%w_.-]+"] = "sh",
+                                          },
+                                        })
+                                    },
                                     { "LazyVim/LazyVim", opts = { colorscheme = "catppuccin-macchiato",},},
                                   },
                                 })
@@ -160,6 +182,19 @@
                                       },
                                     },
                                   })
+
+                                vim.api.nvim_create_autocmd({'BufEnter', 'BufWinEnter'}, {
+                                    pattern = {"*.hl", "hypr*.conf"},
+                                    callback = function(event)
+                                        print(string.format("starting hyprls for %s", vim.inspect(event)))
+                                        vim.lsp.start {
+                                            name = "hyprlang",
+                                            cmd = {"hyprls"},
+                                            root_dir = vim.fn.getcwd(),
+                                        }
+                                    end
+                                })
+
                                 local function map(mode, lhs, rhs, opts)
                 	                local options = { noremap = true, silent = true }
                                   if opts then
