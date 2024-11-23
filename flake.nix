@@ -120,47 +120,54 @@
                 lazyPath = pkgs.linkFarm "lazy-plugins" (builtins.map mkEntryFromDrv plugins);
               in
               ''
-                require("lazy").setup({
-                  defaults = {
-                    lazy = true,
-                  },
-                  dev = {
-                    -- reuse files from pkgs.vimPlugins.*
-                    path = "${lazyPath}",
-                    patterns = { "." },
-                    -- fallback to download
-                    fallback = true,
-                  },
-                  spec = {
-                    { "LazyVim/LazyVim", import = "lazyvim.plugins" },
-                    -- The following configs are needed for fixing lazyvim on nix
-                    -- force enable telescope-fzf-native.nvim
-                    { "nvim-telescope/telescope-fzf-native.nvim", enabled = true },
-                    -- disable mason.nvim, use config.extraPackages
-                    { "williamboman/mason-lspconfig.nvim", enabled = false },
-                    { "williamboman/mason.nvim", enabled = false },
-                    -- uncomment to import/override with your plugins
-                    -- { import = "plugins" },
-                    -- put this line at the end of spec to clear ensure_installed
-                    { "nvim-treesitter/nvim-treesitter", opts = function(_, opts) opts.ensure_installed = {} end },
-                    { "LazyVim/LazyVim", opts = { colorscheme = "catppuccin-macchiato",},},
-                  },
-                })
-                local nvim_lsp = require("lspconfig") 
-                  nvim_lsp.nixd.setup({
-                    cmd = { "nixd" },
-                    settings = {
-                      nixd = {
-                        nixpkgs = {
-                          expr = "import <nixpkgs> { }",
-                        },
-                        formatting = {
-                              command = { "nixfmt" },
-                        },
-                      },
-                    },
-                  })
-                map("i", "jk", "<Esc>")
+                                require("lazy").setup({
+                                  defaults = {
+                                    lazy = true,
+                                  },
+                                  dev = {
+                                    -- reuse files from pkgs.vimPlugins.*
+                                    path = "${lazyPath}",
+                                    patterns = { "." },
+                                    -- fallback to download
+                                    fallback = true,
+                                  },
+                                  spec = {
+                                    { "LazyVim/LazyVim", import = "lazyvim.plugins" },
+                                    -- The following configs are needed for fixing lazyvim on nix
+                                    -- force enable telescope-fzf-native.nvim
+                                    { "nvim-telescope/telescope-fzf-native.nvim", enabled = true },
+                                    -- disable mason.nvim, use config.extraPackages
+                                    { "williamboman/mason-lspconfig.nvim", enabled = false },
+                                    { "williamboman/mason.nvim", enabled = false },
+                                    -- uncomment to import/override with your plugins
+                                    -- { import = "plugins" },
+                                    -- put this line at the end of spec to clear ensure_installed
+                                    { "nvim-treesitter/nvim-treesitter", opts = function(_, opts) opts.ensure_installed = {} end },
+                                    { "LazyVim/LazyVim", opts = { colorscheme = "catppuccin-macchiato",},},
+                                  },
+                                })
+                                local nvim_lsp = require("lspconfig") 
+                                  nvim_lsp.nixd.setup({
+                                    cmd = { "nixd" },
+                                    settings = {
+                                      nixd = {
+                                        nixpkgs = {
+                                          expr = "import <nixpkgs> { }",
+                                        },
+                                        formatting = {
+                                              command = { "nixfmt" },
+                                        },
+                                      },
+                                    },
+                                  })
+                                local function map(mode, lhs, rhs, opts)
+                	                local options = { noremap = true, silent = true }
+                                  if opts then
+                                    options = vim.tbl_extend("force", options, opts)
+                                  end
+                                  vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+                                end
+                                map("i", "jk", "<Esc>")
 
               '';
           };
