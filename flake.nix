@@ -8,7 +8,13 @@
   inputs.flake-parts.url = "github:hercules-ci/flake-parts";
   inputs.flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
 
-  outputs = { self, nixpkgs, nixvim, flake-parts } @ inputs:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nixvim,
+      flake-parts,
+    }@inputs:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [
         "aarch64-darwin"
@@ -17,7 +23,13 @@
         "x86_64-linux"
       ];
 
-      perSystem = { pkgs, lib, system, ... }:
+      perSystem =
+        {
+          pkgs,
+          lib,
+          system,
+          ...
+        }:
         let
           config = {
             extraPackages = with pkgs; [
@@ -31,7 +43,7 @@
               nodePackages.vim-language-server
               yaml-language-server
               nixpkgs-fmt
-	      nixfmt-rfc-style
+              nixfmt-rfc-style
               # Telescope
               ripgrep
             ];
@@ -79,14 +91,30 @@
                   trouble-nvim
                   ts-comments-nvim
                   which-key-nvim
-                  { name = "catppuccin"; path = catppuccin-nvim; }
-                  { name = "mini.ai"; path = mini-nvim; }
-                  { name = "mini.icons"; path = mini-nvim; }
-                  { name = "mini.pairs"; path = mini-nvim; }
+                  {
+                    name = "catppuccin";
+                    path = catppuccin-nvim;
+                  }
+                  {
+                    name = "mini.ai";
+                    path = mini-nvim;
+                  }
+                  {
+                    name = "mini.icons";
+                    path = mini-nvim;
+                  }
+                  {
+                    name = "mini.pairs";
+                    path = mini-nvim;
+                  }
                 ];
-                mkEntryFromDrv = drv:
+                mkEntryFromDrv =
+                  drv:
                   if lib.isDerivation drv then
-                    { name = "${lib.getName drv}"; path = drv; }
+                    {
+                      name = "${lib.getName drv}";
+                      path = drv;
+                    }
                   else
                     drv;
                 lazyPath = pkgs.linkFarm "lazy-plugins" (builtins.map mkEntryFromDrv plugins);
@@ -117,8 +145,8 @@
                     { "nvim-treesitter/nvim-treesitter", opts = function(_, opts) opts.ensure_installed = {} end },
                     { "LazyVim/LazyVim", opts = { colorscheme = "catppuccin-macchiato",},},
                   },
-                  })
-                  local nvim_lsp = require("lspconfig") 
+                })
+                local nvim_lsp = require("lspconfig") 
                   nvim_lsp.nixd.setup({
                     cmd = { "nixd" },
                     settings = {
@@ -132,6 +160,8 @@
                       },
                     },
                   })
+                map("i", "jk", "<Esc>")
+
               '';
           };
           nixvim' = nixvim.legacyPackages."${system}";
