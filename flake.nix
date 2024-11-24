@@ -32,22 +32,10 @@
         }:
         let
           config = {
-            extraPackages = with pkgs; [
-              # language servers
-              lua-language-server
-              stylua
-              nixd
-              nodePackages.bash-language-server
-              dockerfile-language-server-nodejs
-              marksman
-              nodePackages.vim-language-server
-              yaml-language-server
-              nixpkgs-fmt
-              nixfmt-rfc-style
-              hyprls
-              # Telescope
-              ripgrep
-            ];
+            extraPackages =
+              with pkgs;
+              [
+              ];
 
             extraPlugins = [ pkgs.vimPlugins.lazy-nvim ];
 
