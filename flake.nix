@@ -114,77 +114,82 @@
                 lazyPath = pkgs.linkFarm "lazy-plugins" (builtins.map mkEntryFromDrv plugins);
               in
               ''
-                                require("lazy").setup({
-                                  defaults = {
-                                    lazy = true,
-                                  },
-                                  dev = {
-                                    -- reuse files from pkgs.vimPlugins.*
-                                    path = "${lazyPath}",
-                                    patterns = { "." },
-                                    -- fallback to download
-                                    fallback = true,
-                                  },
-                                  spec = {
-                                    { "LazyVim/LazyVim", import = "lazyvim.plugins" },
-                                    -- The following configs are needed for fixing lazyvim on nix
-                                    -- force enable telescope-fzf-native.nvim
-                                    { "nvim-telescope/telescope-fzf-native.nvim", enabled = true },
-                                    -- disable mason.nvim, use config.extraPackages
-                                    { "williamboman/mason-lspconfig.nvim", enabled = false },
-                                    { "williamboman/mason.nvim", enabled = false },
-                                    -- uncomment to import/override with your plugins
-                                    -- { import = "plugins" },
-                                    -- put this line at the end of spec to clear ensure_installed
-                                    { "nvim-treesitter/nvim-treesitter",
-                                        opts = function(_, opts) opts.ensure_installed = {} end
-                                    },
-                                    { "LazyVim/LazyVim", opts = { colorscheme = "catppuccin-macchiato",},},
-                                  },
-                                })
+                require("lazy").setup({
+                  defaults = {
+                    lazy = true,
+                  },
+                  dev = {
+                    -- reuse files from pkgs.vimPlugins.*
+                    path = "${lazyPath}",
+                    patterns = { "." },
+                    -- fallback to download
+                    fallback = true,
+                  },
+                  spec = {
+                    { "LazyVim/LazyVim", import = "lazyvim.plugins" },
+                    -- The following configs are needed for fixing lazyvim on nix
+                    -- force enable telescope-fzf-native.nvim
+                    { "nvim-telescope/telescope-fzf-native.nvim", enabled = true },
+                    -- disable mason.nvim, use config.extraPackages
+                    { "williamboman/mason-lspconfig.nvim", enabled = false },
+                    { "williamboman/mason.nvim", enabled = false },
+                    -- uncomment to import/override with your plugins
+                    -- { import = "plugins" },
+                    -- put this line at the end of spec to clear ensure_installed
+                    { "nvim-treesitter/nvim-treesitter",
+                        opts = function(_, opts) opts.ensure_installed = {} end
+                    },
+                    { "LazyVim/LazyVim", opts = { colorscheme = "catppuccin-macchiato",},},
+                  },
+                })
 
-                                vim.filetype.add({
-                                  extension = { rasi = "rasi", rofi = "rasi", wofi = "rasi" },
-                                  filename = {
-                                    ["vifmrc"] = "vim",
-                                  },
-                                  pattern = {
-                                    [".*/waybar/config"] = "jsonc",
-                                    [".*/mako/config"] = "dosini",
-                                    [".*/kitty/.+%.conf"] = "bash",
-                                    [".*/hypr/.+%.conf"] = "hyprlang",
-                                    ["%.env%.[%w_.-]+"] = "sh",
-                                  },
-                                })
+                vim.filetype.add({
+                  extension = { rasi = "rasi", rofi = "rasi", wofi = "rasi" },
+                  filename = {
+                    ["vifmrc"] = "vim",
+                  },
+                  pattern = {
+                    [".*/waybar/config"] = "jsonc",
+                    [".*/mako/config"] = "dosini",
+                    [".*/kitty/.+%.conf"] = "bash",
+                    [".*/hypr/.+%.conf"] = "hyprlang",
+                    ["%.env%.[%w_.-]+"] = "sh",
+                  },
+                })
 
-                                local nvim_lsp = require("lspconfig") 
-                                  nvim_lsp.nixd.setup({
-                                    cmd = { "nixd" },
-                                    settings = {
-                                      nixd = {
-                                        nixpkgs = {
-                                          expr = "import <nixpkgs> { }",
-                                        },
-                                        formatting = {
-                                              command = { "nixfmt" },
-                                        },
-                                      },
-                                    },
-                                  })
+                local nvim_lsp = require("lspconfig") 
+                  nvim_lsp.nixd.setup({
+                    cmd = { "nixd" },
+                    settings = {
+                      nixd = {
+                        nixpkgs = {
+                          expr = "import <nixpkgs> { }",
+                        },
+                        formatting = {
+                              command = { "nixfmt" },
+                        },
+                      },
+                    },
+                  })
 
-                                  nvim_lsp.hyprls.setup({
-                                    cmd = { 'hyprls', '--stdio' },
-                                    filetypes = { 'hyprlang' },
-                                  })
+                local util = require 'lspconfig.util'
+                  return {
+                    default_config = {
+                      cmd = { 'hyprls', '--stdio' },
+                      filetypes = { 'hyprlang' },
+                      root_dir = util.find_git_ancestor,
+                      single_file_support = true,
+                    },
+                  }
 
-                                local function map(mode, lhs, rhs, opts)
-                	                local options = { noremap = true, silent = true }
-                                  if opts then
-                                    options = vim.tbl_extend("force", options, opts)
-                                  end
-                                  vim.api.nvim_set_keymap(mode, lhs, rhs, options)
-                                end
-                                map("i", "jk", "<Esc>")
+                local function map(mode, lhs, rhs, opts)
+                  local options = { noremap = true, silent = true }
+                  if opts then
+                    options = vim.tbl_extend("force", options, opts)
+                  end
+                  vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+                end
+                map("i", "jk", "<Esc>")
 
               '';
           };
