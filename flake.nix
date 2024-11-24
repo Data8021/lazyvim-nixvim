@@ -172,7 +172,7 @@
                     },
                   })
 
-                local util = require 'lspconfig.util'
+                local util = require("lspconfig")
                   return {
                     default_config = {
                       cmd = { 'hyprls', '--stdio' },
