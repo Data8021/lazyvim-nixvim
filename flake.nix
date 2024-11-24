@@ -172,15 +172,10 @@
                     },
                   })
 
-                local util = require("lspconfig")
-                  return {
-                    default_config = {
-                      cmd = { 'hyprls', '--stdio' },
-                      filetypes = { 'hyprlang' },
-                      root_dir = util.find_git_ancestor,
-                      single_file_support = true,
-                    },
-                  }
+                  nvim_lsp.hyprls.setup({
+                    cmd = { 'hyprls', '--stdio' },
+                    filetypes = { 'hyprlang' },
+                  })
 
                 local function map(mode, lhs, rhs, opts)
                   local options = { noremap = true, silent = true }
